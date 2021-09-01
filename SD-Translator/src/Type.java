@@ -1,0 +1,3 @@
+public enum Type {
+    WORD,OPEN_PAREN,CLOSE_PAREN,OPEN_CURLY,CLOSE_CURLY;
+}
