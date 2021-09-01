@@ -1,42 +1,24 @@
-Hello () {
-
-If () {
-If () {
-If () {
-If () {
-
+main(){
+Home
+if(){
+Something
+while(){
+Something
+if(){
+something
+while(){
+Something
+Something
 }
-}
-}
-}
-
-Foo
-Bar
-there
-Here
-Use
-CSE
-
-while () {
-while () {
-while () {
-while () {
-
 }
 }
 }
 }
 
-Final
-try
-
-while () { if () { while () { if () { while () { if () { while () { if () { while () { if () { } } } } } } } } } }
-while () { if () { while () { if () { while () { if () { while () { if () { while () { if () { } } } } } } } } } }
-
-Almost
-
-while () { if () { while () { if () { while () { if () { while () { if () { while () { if () { } } } } } } } } } }
-while () { if () { while () { if () { while () { if () { while () { if () { while () { if () { } } } } } } } } } }
-
-done
+home(){
+if(){
+while(){
+something
+}
+}
 }
