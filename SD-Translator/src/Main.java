@@ -5,7 +5,7 @@ public class Main {
         String text = null;
         Compiler cs = new Compiler();
         try {
-            text = cs.readTextFile("C:\\Users\\ishan\\IdeaProjects\\SD-Translator\\src\\input1.txt");
+            text = cs.readTextFile("C:\\github\\CSE_564_Translator\\SD-Translator\\src\\input1.txt");
             cs.splitWords(text);
             cs.translate();
             System.out.println("successfully done");
