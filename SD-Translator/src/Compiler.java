@@ -13,11 +13,10 @@ import java.util.Stack;
  * @author : Ishanu Dhar (ID-1222326326, idhar@asu.edu)
  * @author : Pritam De (ID: 1219491988, pritamde@asu.edu)
  * @see {@link Token}
- * @see {@link Type}
  */
 public class Compiler {
     List<Token> tokens = new ArrayList<>();
-    Stack<String> braceChecker = new Stack<>();
+    Stack<String> storeDelimiters = new Stack<>();
     String fileContent = "";
     int index;
 
@@ -52,22 +51,22 @@ public class Compiler {
         while (i < fileContent.length()) {
             char c = fileContent.charAt(i);
             if ((c + "").equals("(")) {
-                tokens.add(new Token("(", Type.OPEN_PAREN));
+                tokens.add(new Token("(","delimiter"));
                 i++;
             } else if ((c + "").equals(")")) {
-                tokens.add(new Token(")", Type.CLOSE_PAREN));
+                tokens.add(new Token(")", "delimiter"));
                 i++;
             } else if ((c + "").equals("{")) {
-                tokens.add(new Token("{", Type.OPEN_CURLY));
+                tokens.add(new Token("{", "delimiter"));
                 i++;
             } else if ((c + "").equals("}")) {
-                tokens.add(new Token("}", Type.CLOSE_CURLY));
+                tokens.add(new Token("}", "delimiter"));
                 i++;
             } else {
                 if (Character.isLetter(c)) {
                     token = createWord(fileContent, i, c);
                     i = i + token.length();
-                    tokens.add(new Token(token, Type.WORD));
+                    tokens.add(new Token(token, "word"));
                 } else {
                     i++;
                 }
@@ -84,28 +83,28 @@ public class Compiler {
         while (index < tokens.size()) {
             checkSyntax();
         }
-        if(!braceChecker.isEmpty()) {
+        if(!storeDelimiters.isEmpty()) {
             throw new Exception("Syntax Error - 1");
         }
         printTranslation();
     }
 
-
-
-
-
-
-    private void checkSyntax() throws Exception {
+    /**
+     * This is a util method consumed by translator method to check if the tokens are in order or syntactically correct.
+     * Will throw exception otherwise.
+     * @throws Exception
+     */
+    public void checkSyntax() throws Exception {
         if (checkIf()) {
-            braceChecker.add("{");
+            storeDelimiters.add("{");
             index = index + 4;
             checkSyntax();
         } else if (checkWhile()) {
-            braceChecker.add("{");
+            storeDelimiters.add("{");
             index = index + 4;
             checkSyntax();
         } else if (checkMethod()) {
-            braceChecker.add("{");
+            storeDelimiters.add("{");
             index = index + 4;
             checkSyntax();
             return;
@@ -114,11 +113,11 @@ public class Compiler {
             return;
         } else if (tokens.get(index).getData().equals("}")) {
             index++;
-            if (braceChecker.isEmpty()) {
+            if (storeDelimiters.isEmpty()) {
                 throw new Exception("Syntax Error - 3");
             } else {
-                if (braceChecker.peek().equals("{")) {
-                    braceChecker.pop();
+                if (storeDelimiters.peek().equals("{")) {
+                    storeDelimiters.pop();
                 }
             }
             return;
@@ -127,40 +126,45 @@ public class Compiler {
         }
     }
 
-
-    private void printTranslation() {
+    /**
+     * This method prints the final translation
+     */
+    public void printTranslation() {
         index = 0;
         Stack<String> storeBraces = new Stack<>();
         String translatedString = "";
         while (index < tokens.size()) {
              if (checkIf()) {
-                storeBraces.add("<");
-                translatedString  += "< ";
-                index = index + 4;
+                 storeBraces.add("<");
+                 translatedString  += "< ";
+                 index = index + 4;
             } else if (checkWhile()) {
-                storeBraces.add("(");
-                translatedString  += "( ";
-                index = index + 4;
+                 storeBraces.add("(");
+                 translatedString  += "( ";
+                 index = index + 4;
             } else if (checkMethod()) {
                  storeBraces.add("[");
                  translatedString  += "[ ";
                  index = index + 4;
              } else if (checkWord()) {
-                translatedString += "- ";
-                index = index + 1;
+                 translatedString += "- ";
+                 index = index + 1;
             }  else if (tokens.get(index).getData().equals("}")) {
-                translatedString = checkBraces(storeBraces, translatedString);
-                index ++;
+                 translatedString = matchDelimiters(storeBraces, translatedString);
+                 index ++;
             }
-
         }
         System.out.println(translatedString);
     }
 
-
-
-
-    private String createWord(String text, int i, char c) {
+    /**
+     * This is a util method which parses the text file to create word token
+     * @param text - the string that needs to be parsed
+     * @param i - index from which the parsing begins
+     * @param c - the character that needs to be checked
+     * @return - a fully formed word token
+     */
+    public String createWord(String text, int i, char c) {
         int j = i;
         String token = "";
         while (Character.isLetter(c)) {
@@ -171,33 +175,55 @@ public class Compiler {
         return token;
     }
 
-    private boolean checkIf() {
+    /**
+     * This method checks if the token is an If type
+     * @return - a boolean
+     */
+    public boolean checkIf() {
         return tokens.get(index).getData().equalsIgnoreCase("if")
                 && tokens.get(index + 1).getData().equals("(")
                 && tokens.get(index + 2).getData().equals(")")
                 && tokens.get(index + 3).getData().equals("{");
     }
 
-    private boolean checkWhile() {
+    /**
+     * This method checks if the token is a While type
+     * @return a booelean
+     */
+    public boolean checkWhile() {
         return tokens.get(index).getData().equalsIgnoreCase("while")
                 && tokens.get(index + 1).getData().equals("(")
                 && tokens.get(index + 2).getData().equals(")")
                 && tokens.get(index + 3).getData().equals("{");
     }
 
-    private boolean checkMethod() {
-        return tokens.get(index).getType().equals(Type.WORD)
+    /**
+     * This method checks if the token is a Method type
+     * @return a boolean
+     */
+    public boolean checkMethod() {
+        return tokens.get(index).getType().equals("word")
                 && tokens.get(index + 1).getData().equals("(")
                 && tokens.get(index + 2).getData().equals(")")
                 && tokens.get(index + 3).getData().equals("{");
     }
 
-    private boolean checkWord() {
-        return tokens.get(index).getType().equals(Type.WORD);
+    /**
+     * This method checks if the token is an Instruction type
+     * @return a boolean
+     */
+    public boolean checkWord() {
+        return tokens.get(index).getType().equals("word");
     }
 
-    private String checkBraces(Stack<String> storeBraces, String translatedString) {
-        switch (storeBraces.pop()) {
+    /**
+     * This method matches the delimiters in order to print the correct translation
+     * @param storeDelimiters - takes a stack of delimiters to match thr closing delimiters
+     * @param translatedString - translated string that needs to be printed
+     * @return translated string
+     */
+    public static String matchDelimiters(Stack<String> storeDelimiters, String translatedString) {
+        switch (storeDelimiters.pop()) {
             case "<": translatedString += "> ";
                 break;
             case "(": translatedString += ") ";
@@ -206,7 +232,6 @@ public class Compiler {
                 break;
         }
         return  translatedString;
-
     }
 
 }
