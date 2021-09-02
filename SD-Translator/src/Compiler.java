@@ -107,10 +107,10 @@ public class Compiler {
             storeDelimiters.add("{");
             index = index + 4;
             checkSyntax();
-            return;
+
         } else if (checkWord()) {
             index = index + 1;
-            return;
+
         } else if (tokens.get(index).getData().equals("}")) {
             index++;
             if (storeDelimiters.isEmpty()) {
@@ -120,10 +120,9 @@ public class Compiler {
                     storeDelimiters.pop();
                 }
             }
-            return;
-        } else {
-            throw new Exception();
-        }
+            } else {
+                throw new Exception();
+            }
     }
 
     /**
@@ -218,7 +217,7 @@ public class Compiler {
 
     /**
      * This method matches the delimiters in order to print the correct translation
-     * @param storeDelimiters - takes a stack of delimiters to match thr closing delimiters
+     * @param storeDelimiters - takes a stack of delimiters to match the closing delimiters
      * @param translatedString - translated string that needs to be printed
      * @return translated string
      */
