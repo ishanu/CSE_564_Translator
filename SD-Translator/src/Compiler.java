@@ -107,10 +107,8 @@ public class Compiler {
             storeDelimiters.add("{");
             index = index + 4;
             checkSyntax();
-            return;
         } else if (checkWord()) {
             index = index + 1;
-            return;
         } else if (tokens.get(index).getData().equals("}")) {
             index++;
             if (storeDelimiters.isEmpty()) {
@@ -120,7 +118,6 @@ public class Compiler {
                     storeDelimiters.pop();
                 }
             }
-            return;
         } else {
             throw new Exception();
         }
